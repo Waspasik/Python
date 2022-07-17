@@ -109,8 +109,8 @@ position, eng_alphabet, numbers = input(), 'abcdefgh', '12345678'
 matrix = [['.' for _ in range(8)] for _ in range(8)]
 rows, cols = 8 - int(position[1]), eng_alphabet.index(position[0])
 matrix[rows][cols] = 'N'
-for l in range(7, -1, -1):
-    for k in range(7, -1, -1):
+for l in range(8):
+    for k in range(8):
         p = (rows - k) * (cols - l)
         if p == 2 or p == -2:
             matrix[k][l] = '*'
