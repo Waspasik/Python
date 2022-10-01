@@ -203,3 +203,201 @@ with open('data1.json', encoding='utf-8') as file1, open('data2.json', encoding=
     
     with open('data_merge.json', 'w', encoding='utf-8') as file:
         json.dump(data_merge, file)
+
+        
+        
+# Разные типы
+# Вам доступен файл data.json, содержащий список различных объектов:
+
+# [
+#    "nwkWXma",
+#    null,
+#    {
+#       "ISgHT": "dIUbf"
+#    },
+#    "Pzt",
+#    "BXcbGVTE",
+#    ...
+# ]
+
+# Напишите программу, которая создает список, элементами которого являются
+# объекты из списка, содержащегося в файле data.json, измененные по следующим
+# правилам:
+
+# если объект является строкой, в его конец добавляется восклицательный знак
+# если объект является числом, он увеличивается на единицу
+# если объект является логическое значением, он инвертируется
+# если объект является списком, он удваивается
+# если объект является JSON-объектом (словарем), в него добавляется новая пара
+# "newkey": null
+# если объект является пустым значением (null), он не добавляется
+
+# Полученный список программа должна записать в файл updated_data.json.
+
+# Примечание 1. Например, если бы файл data.json имел вид:
+
+# ["Hello", 179, true, null, [1, 2, 3], {"key": "value"}]
+
+# то программа должна была бы создать файл updated_data.json со следующим
+# содержанием:
+
+# ["Hello!", 180, false, [1, 2, 3, 1, 2, 3], {"key": "value", "newkey": null}]
+
+import json
+
+with open('data.json', encoding='utf-8') as file:
+    data = json.load(file)
+    result_data = []
+
+    for elem in data:
+        if elem is None:
+            continue
+        elif type(elem) is bool:
+                result_data.append(not elem)
+        elif type(elem) is str:
+            result_data.append(elem + '!')
+        elif type(elem) is int or type(elem) is float:
+            result_data.append(elem + 1)
+        elif type(elem) is list:
+            result_data.append(elem * 2)
+        elif type(elem) is dict:
+            result_data.append(elem | {"newkey": None})
+    
+    with open('updated_data.json', 'w', encoding='utf-8') as new_file:
+        json.dump(result_data, new_file, indent=3)
+
+
+
+# Восстановление недостающих ключей
+# Вам доступен файл people.json, содержащий список JSON-объектов. Причем у
+# различных объектов может быть различное количество ключей:
+
+# [
+#    {
+#       "age": 33,
+#       "country": "Lesotho",
+#       "phone": "(927) 316-2249",
+#       "family_status": "married",
+#       "email": "neonatus@outlook.com"
+#    },
+#    {
+#       "age": 25,
+#       "country": "Guinea",
+#       "name": "Dorey",
+#       "children": "yes",
+#       "email": "ismail@gmail.com",
+#       "university": "Khalifa University",
+#       "family_status": "married"
+#    },
+#    ...
+# ]
+
+# Напишите программу, которая добавляет в каждый JSON-объект из данного списка
+# все недостающие ключи, присваивая этим ключам значение null. Ключ считается
+# недостающим, если он присутствует в каком-либо другом объекте, но отсутствует
+# в данном. Программа должна создать список с обновленными JSON-объектами и
+# записать его в файл updated_people.json.
+
+# Примечание 1. JSON-объекты в создаваемом программой списке должны располагаться
+# в своем исходном порядке. Порядок ключей в JSON-объектах не важен.
+
+# Примечание 2. Например, если бы файл people.json имел вид:
+
+# [
+#    {
+#       "age": 33,
+#       "country": "Lesotho"
+#    },
+#    {
+#       "age": 25,
+#       "country": "Guinea",
+#       "name": "Dorey"
+#    }
+# ]
+
+# то программа должна была создать файла updated_people.json со следующим содержанием:
+
+# [
+#    {   
+#       "age": 33,
+#       "country": "Lesotho"
+#       "name": null
+#    },
+#    {
+#       "age": 25,
+#       "country": "Guinea",
+#       "name": "Dorey"
+#    }
+# ]
+
+import json
+
+with open('people.json', 'r', encoding='utf-8') as file:
+    data = json.load(file)
+    result_data = []
+    all_keys_dict = {}
+
+    for elem in data:
+        for key in elem:
+            all_keys_dict[key] = all_keys_dict.get(key, None)
+    
+    for elem in data:
+        for key in all_keys_dict:
+            elem[key] = elem.get(key, None)
+        result_data.append(elem)
+    
+    with open('updated_people.json', 'w', encoding='utf-8') as new_file:
+        json.dump(result_data, new_file, indent=3)
+
+
+
+# Я исповедую Python, а ты?
+# Вам доступен файл countries.json, содержащий список JSON-объектов c информацией
+# о странах и исповедуемых в них религиях:
+
+# [
+#    {
+#       "country": "Afghanistan",
+#       "religion": "Islam"
+#    },
+#    {
+#       "country": "Albania",
+#       "religion": "Islam"
+#    },
+#    ...
+# ]
+
+# Каждый объект из этого списка содержит два атрибута:
+
+# country — страна
+# religion — исповедуемая религия
+
+# Напишите программу, которая создает единственный JSON-объект, имеющий в качестве
+# ключа название религии, а в качестве значения — список стран, в которых исповедуется
+# данная религия. Полученный JSON-объект программа должна записать в файл religion.json.
+
+# Примечание 1. Страны в списках должны располагаться в своем исходном порядке.
+
+# Примечание 2. Начальная часть файла religion.json выглядит так:
+
+# {
+#    "Islam":[
+#       "Afghanistan",
+#       "Albania",
+#       "Algeria",
+#       ...
+#    ],
+#    ...
+# }
+
+import json
+
+with open('D:/Python/Stepik/countries.json', encoding='utf-8') as file:
+    data = json.load(file)
+    religion_dict = {}
+
+    for elem in data:
+        religion_dict[elem['religion']] = religion_dict.get(elem['religion'], []) + [elem['country']]
+    
+    with open('religion.json', 'w', encoding='utf-8') as new_file:
+        json.dump(religion_dict, new_file, indent=3)
