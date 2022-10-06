@@ -85,10 +85,10 @@ from zipfile import ZipFile
 import json
 
 
-def is_correct_json(fr):
+def is_correct_json(f):
     try:
-        data_string = json.loads(fr)
-        if bool(data_string):
+        data = json.loads(f)
+        if bool(data):
             return True
     except json.decoder.JSONDecodeError:
         return False
@@ -99,20 +99,20 @@ def is_correct_decode(f):
         with zip_file.open(f.filename) as file:
             file_read = file.read().decode('utf-8')
             if is_correct_json(file_read):
-                return creat_dict_players(file_read)
+                return creat_set_players(file_read)
     except:
         return False
 
 
-def creat_dict_players(readable_file):
-    data = json.loads(readable_file)
+def creat_set_players(file):
+    data = json.loads(file)
     if data['team'] == 'Arsenal':
         player = f'{data["first_name"]} {data["last_name"]}'
-        result[player] = result.get(player, 0) + 1
+        result.add(player)
 
 
 with ZipFile('data.zip') as zip_file:
-    result = {}
+    result = set()
     for file in zip_file.infolist():
         if not file.is_dir():
             is_correct_decode(file)
