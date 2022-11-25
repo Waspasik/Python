@@ -286,19 +286,19 @@ with open('titanic.csv', encoding='utf-8') as file:
 import csv
 from datetime import datetime
 
-with open('D:/Python/Stepik/name_log.csv', encoding='utf-8') as file:
-    reader = list(csv.reader(file))
-    reader_dict = {}
-    email_users_dict = {}
-    columns = reader[0]
-    for i in range(1, len(reader)):
-        reader_dict[datetime.strptime(reader[i][-1], '%d/%m/%Y %H:%M')] = reader_dict.get(datetime.strptime(reader[i][-1], '%d/%m/%Y %H:%M'), reader[i][:-1])
 
-    for i in range(1, len(reader)):
-        email_users_dict[reader[i][1]] = email_users_dict.get(reader[i][1], []) + [datetime.strptime(reader[i][-1], '%d/%m/%Y %H:%M')]
-    
+with open('D:/Python/Stepik/name_log.csv', encoding='utf-8') as file:
+    dict_reader = csv.DictReader(file)  
+    email_users_dict = {}
+    latest_data_dict = {}
+    for info_dict in dict_reader:
+        email_users_dict[info_dict['email']] = email_users_dict.get(info_dict['email'], {})
+        dtime_change = datetime.strptime(info_dict['dtime'], '%d/%m/%Y %H:%M')
+        email_users_dict[info_dict['email']][dtime_change] = email_users_dict[info_dict['email']].get(dtime_change, []) + [info_dict['username']]
+
     with open('D:/Python/Stepik/new_name_log.csv', 'w', encoding='utf-8', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(columns)
-        for key, value in email_users_dict.items():
-            writer.writerow([reader_dict[max(value)], max(value).strftime('%d/%m/%Y %H:%M')])
+        writer.writerow(['username', 'email', 'dtime'])
+        for email, dtime_change in sorted(email_users_dict.items(), key=lambda x: x[0]):
+            dtime_last_changed = max(dtime_change)
+            writer.writerow([dtime_change[dtime_last_changed][0], email, dtime_last_changed.strftime('%d/%m/%Y %H:%M')])
